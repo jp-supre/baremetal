@@ -25,7 +25,6 @@ struct SDTH {
   unsigned int creator_id;
   unsigned int creator_revision;
 } __attribute__((packed));
-
 // Extended System Descriptor Table
 // other_tables is an array with variable length, so not included in struct definition
 struct XSDT {
