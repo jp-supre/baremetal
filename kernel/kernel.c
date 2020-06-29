@@ -22,9 +22,11 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
   init_frame_buffer(&hardware_info.fb);
    puts("hello world!!\nI'm Jumpei!!!\rThis is a pen.Are you a pen ?\napplepen pine-apple pen\n");
 
-   puth(27,4);
+   /*puth(27,4);*/
   /* // To */ /*here - sample code*/
-  
+   char *a = "FACP";
+   char *b = "FACP";
+   puth(strncomp(a,b),1); 
   // Do not delete it!
   while (1);
 }
