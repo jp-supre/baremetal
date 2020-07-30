@@ -26,7 +26,7 @@ static void putc(char c){
   for (unsigned char i = 0;i < 8;i++) {
     for (unsigned char j = 0;j < 8;j++) {
       struct Pixel *pixel = FB->base + FB->width*fb_y + fb_x;
-      if (((font[c][i] >> (7 - j)) & mask) == mask){
+      if (((font[(unsigned char)c][i] >> (7 - j)) & mask) == mask){
 	pixel->r = 255;
 	pixel->g = 255;
 	pixel->b = 255;
@@ -89,13 +89,13 @@ void puth(unsigned long long value,unsigned char digit_len){
   }
 }
 
-unsigned char strncomp(char *s1, char *s2) {
-  while(*s1 == *s2) {
-    if (*s1 == '\0') {
-      return 0;
+
+unsigned char strncomp(char *s1,char *s2) {
+  for (unsigned int i = 0;i<4;i++) {
+    if (*s1+i != *s2+i) {
+      return 1;
     }
-    s1++;
-    s2++;
   }
-  return (unsigned char)*s1 - (unsigned char)*s2;
+  return 0;
 }
+

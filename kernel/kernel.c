@@ -1,6 +1,8 @@
 #include "hardware.h"
 #include "segmentation.h"
 #include "util.h"
+#include "pm_timer.h"
+#include "lapic_timer.h"
 
 void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_hardware_info) {
   // From here - Put this part at the top of start() function
@@ -9,24 +11,26 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
   init_segmentation();
   // To here - Put this part at the top of start() function
 
-  // Delete/*  me. I'm a sample code. */
-  /* for (unsigned int i = 0; i < hardware_info.fb.height; i++) { */
-  /*   for (unsigned int j = 0; j < hardware_info.fb.width; j++) { */
-  /*     struct Pixel *pixel = hardware_info.fb.base + hardware_info.fb.width * i + j; */
-  /*     // † AYAME † */
-  /*     pixel->r = 111; */
-  /*     pixel->g = 51; */
-  /*     pixel->b = 129; */
-  /*   } */
-  /* } */
   init_frame_buffer(&hardware_info.fb);
-   puts("hello world!!\nI'm Jumpei!!!\rThis is a pen.Are you a pen ?\napplepen pine-apple pen\n");
+  puts("hello world!!\nI'm Jumpei!!!\rThis is a pen.Are you a pen ?\napplepen pine-apple pen\n");
 
-   /*puth(27,4);*/
-  /* // To */ /*here - sample code*/
-   char *a = "FACP";
-   char *b = "FACP";
-   puth(strncomp(a,b),1); 
+  puts("100 is ");
+  puth(100,4);
+  puts("\n");
+
+
+  init_acpi_pm_timer(hardware_info.rsdp);
+
+  puts("wait 2 sec\n");
+
+  pm_timer_wait_millisec(2000);
+
+  puts("finished\n");
+
+  unsigned int freq = measure_lapic_freq_khz();
+  puts("freq is ");
+  puth(freq,8);
+  puts("\n");
   // Do not delete it!
   while (1);
 }
