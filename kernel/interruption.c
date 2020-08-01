@@ -53,16 +53,6 @@ static void register_intr_handler(unsigned char index,unsigned long long offset,
 void init_intr() {
 	load_Idt_to_Idtr();
 
-	// for (int i = 0; i < 256; ++i)
-	// {
-	// 	IDT[i].offset_lo = 0;
-	// 	IDT[i].segment = 0;
-	// 	IDT[i].attribute = 0;
-	// 	IDT[i].offset_mid = 0;
-	// 	IDT[i].offset_hi = 0;
-	// 	IDT[i].reserved = 0;
-	// }
-
 	unsigned long long handler;
     asm volatile ("lea lapic_intr_handler(%%rip), %[handler]" : [handler]"=r"(handler));
 
