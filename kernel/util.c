@@ -99,3 +99,7 @@ unsigned char strncomp(char *s1,char *s2) {
   return 0;
 }
 
+void put_hello() {
+  puts("hello world\n");
+  return;
+}
