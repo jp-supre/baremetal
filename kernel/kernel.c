@@ -5,6 +5,7 @@
 #include "lapic_timer.h"
 #include "interruption.h"
 #include "sched.h"
+#include "syscall.h"
 
 void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_hardware_info) {
   // From here - Put this part at the top of start() function
@@ -39,13 +40,26 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
   // lapic_periodic_exec(1000,(void *)handler);
   // lapic_periodic_exec(1000,(void *)put_hello);
 
-  void *handler;
-  asm volatile ("lea schedule(%%rip), %[handler]":[handler]"=r"(handler));
+  // void *handler;
+  // asm volatile ("lea schedule(%%rip), %[handler]":[handler]"=r"(handler));
 
-  lapic_periodic_exec(2000, handler);
-  init_tasks();
+  // lapic_periodic_exec(2000, handler);
+  // init_tasks();
   // Do not delete it!
 
-  puts("here\n");
+  init_intr();
+
+
+  unsigned long long ret;
+  char *str = "hello world\n";
+  asm volatile (
+    "mov %[id], %%rdi\n"
+    "mov %[str], %%rsi\n"
+    "int $0x80\n"
+    "mov %%rax, %[ret]\n"
+    : [ret]"=r"(ret)
+    : [id]"r"((unsigned long long)SYSCALL_PUTS),
+     [str]"m"((unsigned long long)str));
+
   while (1);
 }

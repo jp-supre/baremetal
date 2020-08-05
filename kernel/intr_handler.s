@@ -1,6 +1,5 @@
-.global lapic_intr_handler
-lapic_intr_handler:
-  push %rax
+.global syscall_handler
+syscall_handler:
   push %rcx
   push %rdx
   push %rbx
@@ -15,8 +14,7 @@ lapic_intr_handler:
   push %r13
   push %r14
   push %r15
-  mov %rsp, %rdi
-  call lapic_intr_handler_internal
+  call syscall_handler_internal
   pop %r15
   pop %r14	   
   pop %r13	   
@@ -30,6 +28,5 @@ lapic_intr_handler:
   pop %rbp	  
   pop %rbx	  
   pop %rdx	   
-  pop %rcx	   
-  pop %rax	   
+  pop %rcx   
   iretq
