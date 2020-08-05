@@ -53,15 +53,15 @@ static void register_intr_handler(unsigned char index,unsigned long long offset,
 void init_intr() {
 	load_Idt_to_Idtr();
 
-	// unsigned long long handler;
- //    asm volatile ("lea lapic_intr_handler(%%rip), %[handler]" : [handler]"=r"(handler));
+	unsigned long long handler;
+    asm volatile ("lea lapic_intr_handler(%%rip), %[handler]" : [handler]"=r"(handler));
 
     unsigned short segment;
     asm volatile ("mov %%cs, %0" : "=r"(segment));
 
     unsigned short attribute = 0b1000111000000000;
 
-    // register_intr_handler(32,handler,segment,attribute);
+    register_intr_handler(32,handler,segment,attribute);
 
     unsigned long long handler2;
     asm volatile ("lea syscall_handler(%%rip), %[handler2]" : [handler2]"=r"(handler2));

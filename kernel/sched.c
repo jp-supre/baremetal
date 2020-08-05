@@ -7,35 +7,35 @@
 #include "sched.h"
 
 #define TASK_NUM 3
-#define STACK_SIZE 4096
+// #define STACK_SIZE 4096
 
-char stack0[STACK_SIZE];
-char stack1[STACK_SIZE];
-char stack2[STACK_SIZE];
+// char stack0[STACK_SIZE];
+// char stack1[STACK_SIZE];
+// char stack2[STACK_SIZE];
 
-static void task0() {
-	while(1) {
-		puts("hello from task0\n");
-		volatile int i = 100000000;
-		while(i--);
-	}
-}
+// static void task0() {
+// 	while(1) {
+// 		puts("hello from task0\n");
+// 		volatile int i = 100000000;
+// 		while(i--);
+// 	}
+// }
 
-static void task1() {
-	while(1) {
-		puts("hello from task1\n");
-		volatile int i = 100000000;
-		while(i--);
-	}
-}
+// static void task1() {
+// 	while(1) {
+// 		puts("hello from task1\n");
+// 		volatile int i = 100000000;
+// 		while(i--);
+// 	}
+// }
 
-static void task2() {
-	while(1) {
-		puts("hello from task2\n");
-		volatile int i = 100000000;
-		while(i--);
-	}
-}
+// static void task2() {
+// 	while(1) {
+// 		puts("hello from task2\n");
+// 		volatile int i = 100000000;
+// 		while(i--);
+// 	}
+// }
 
 struct Task{
 	unsigned long long sp;
@@ -44,12 +44,44 @@ struct Task{
 struct Task tasks[TASK_NUM];
 unsigned int current_task = 0;
 
-static void init_task(int idx,unsigned char *stack_bottom,unsigned long long rip) {
-	unsigned long long *sp = (unsigned long long *)stack_bottom;
+// static void init_task(int idx,unsigned char *stack_bottom,unsigned long long rip) {
+// 	unsigned long long *sp = (unsigned long long *)stack_bottom;
+// 	unsigned long long ss;
+// 	asm volatile ("mov %%ss, %0":"=r"(ss));
+
+// 	unsigned long long rsp = (unsigned long long)stack_bottom;
+
+// 	*(sp-1) = ss;
+// 	*(sp-2) = rsp;
+
+// 	unsigned long long current_sp = rsp - 16;
+
+// 	unsigned long long reg64;
+//     asm volatile (
+//         "mov %%rsp, %0\n"
+//         "mov %1, %%rsp\n"
+//         "pushfq\n":"=r"(reg64):"m"(current_sp)
+//     );
+//     asm volatile ("mov %0, %%rsp"::"m"(reg64));
+
+// 	unsigned short cs_pres;
+// 	asm volatile ("mov %%cs, %0":"=r"(cs_pres));
+// 	unsigned long long cs = cs_pres;
+
+//     *(sp-4) = cs;
+//     *(sp-5) = rip;
+
+//     tasks[idx].sp = (unsigned long long)stack_bottom - 160;
+
+//     return;
+// }
+
+static void init_task(int idx,unsigned long long app_bottom,unsigned long long app_top) {
+	unsigned long long *sp = (unsigned long long *)app_bottom;
 	unsigned long long ss;
 	asm volatile ("mov %%ss, %0":"=r"(ss));
 
-	unsigned long long rsp = (unsigned long long)stack_bottom;
+	unsigned long long rsp = app_bottom;
 
 	*(sp-1) = ss;
 	*(sp-2) = rsp;
@@ -69,9 +101,9 @@ static void init_task(int idx,unsigned char *stack_bottom,unsigned long long rip
 	unsigned long long cs = cs_pres;
 
     *(sp-4) = cs;
-    *(sp-5) = rip;
+    *(sp-5) = app_top;
 
-    tasks[idx].sp = (unsigned long long)stack_bottom - 160;
+    tasks[idx].sp = (unsigned long long)app_bottom - 160;
 
     return;
 }
@@ -79,12 +111,15 @@ static void init_task(int idx,unsigned char *stack_bottom,unsigned long long rip
 
 
 void init_tasks() {
-	init_task(1,(unsigned char *)(stack1+STACK_SIZE),(unsigned long long)task1);
-	init_task(2,(unsigned char *)(stack2+STACK_SIZE),(unsigned long long)task2);
+	init_task(1,(unsigned long long)0x106000000,(unsigned long long)0x105000000);
+	init_task(2,(unsigned long long)0x107000000,(unsigned long long)0x106000000);
 
-	unsigned long long sp0 = (unsigned long long)(stack0+STACK_SIZE);
+	unsigned long long sp0 = (unsigned long long)0x105000000;
 	asm volatile ("mov %0, %%rsp"::"m"(sp0));
-	task0();
+	
+	unsigned long long rip = (unsigned long long)0x104000000;
+	asm volatile("jmp *%0"::"m"(rip));
+	return;
 }
 
 void schedule(unsigned long long sp) {
