@@ -7,7 +7,8 @@
 #include "sched.h"
 #include "syscall.h"
 #include "memory.h"
-#include "pci.h" 
+#include "pci.h"
+#include "nic.h"
 
 void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_hardware_info) {
   // From here - Put this part at the top of start() function
@@ -72,6 +73,12 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
   puth(base_addr,8);
   puts("\n");
 
+  init_nic(base_addr);
+
+  unsigned char str[] = "hello world"; 
+  send_frame(str,sizeof(str));
+
+  puts("here\n");
 
   while (1);
 }

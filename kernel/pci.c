@@ -61,6 +61,9 @@ void init_nic_pci() {
 	unsigned int tenth_bit = 0b10000000000;
 	unsigned int reg01_data = read_pci_conf(0,3,0,0x04);
 	reg01_data = (reg01_data % (1<<16)) | tenth_bit;
+	if((reg01_data & 0b110) != 0b110) {
+		puts("bad data\n");
+	}
 	write_pci_conf(0,3,0,0x04,reg01_data);
 	return;
 }
