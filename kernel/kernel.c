@@ -80,5 +80,22 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
 
   puts("here\n");
 
+  while(1) {
+    volatile unsigned long long j = 100000000;
+    while (j--);
+    char buf[2048];
+    unsigned short len = receive_frame(buf);
+    for (int i = 0; i < len; i++) {
+      puth(buf[i], 2);
+      if ((i + 1) % 16 == 0) puts(" ");
+      else if ((i + 1) % 8 == 0) {
+        puts(" ");
+      }
+      if (len > 0) {
+        puts(" ");
+      }
+    }
+  }
+
   while (1);
 }
