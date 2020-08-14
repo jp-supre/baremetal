@@ -87,7 +87,7 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
     unsigned short len = receive_frame(buf);
     for (int i = 0; i < len; i++) {
       puth(buf[i], 2);
-      if ((i + 1) % 16 == 0) puts(" ");
+      if ((i + 1) % 16 == 0) puts(" \n");
       else if ((i + 1) % 8 == 0) {
         puts(" ");
       }
